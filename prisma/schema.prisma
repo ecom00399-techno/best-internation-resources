@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Lead {
+  id           String   @id @default(uuid())
+  name         String
+  email        String
+  phone        String?
+  company      String?
+  industry     String?
+  service      String?
+  message      String?
+  status       String   @default("new") // new, contacted, closed
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("leads")
+}
+
+model QuoteRequest {
+  id           String   @id @default(uuid())
+  name         String
+  company      String?
+  phone        String?
+  email        String
+  industry     String?
+  service      String?
+  details      String?
+  timeline     String?
+  status       String   @default("new")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("quote_requests")
+}
+
+model ContactRequest {
+  id           String   @id @default(uuid())
+  name         String
+  email        String
+  phone        String?
+  message      String
+  status       String   @default("new")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("contact_requests")
+}
+
+model ActivityLog {
+  id           String   @id @default(uuid())
+  action       String
+  details      String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("activity_logs")
+}
