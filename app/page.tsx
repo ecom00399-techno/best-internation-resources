@@ -1,43 +1,103 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Globe, ShieldCheck, Clock, CheckCircle2, TrendingUp, Anchor, Plane, Truck, Package, PackageSearch, Users } from "lucide-react";
 import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 6000, stopOnInteraction: false })]);
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/reviews")
+      .then(res => res.json())
+      .then(data => {
+        if (data.reviews) setReviews(data.reviews);
+      })
+      .catch(err => console.error("Failed to load reviews:", err));
+  }, []);
+
+  const slides = [
+    {
+      title: "Global Logistics Solutions Built For",
+      highlight: "Modern Supply Chains",
+      desc: "Connecting businesses with reliable logistics coordination, freight solutions, supply chain support, and operational excellence across global markets.",
+      image: "/hero_logistics.png"
+    },
+    {
+      title: "End-to-End International",
+      highlight: "Freight Coordination",
+      desc: "Seamless ocean, air, and ground freight forwarding networks ensuring your cargo reaches its destination safely and on time.",
+      image: "/hero_coordination.png"
+    },
+    {
+      title: "Enterprise-Grade",
+      highlight: "Digital Growth",
+      desc: "Scaling your B2B operations with advanced logistics strategies and highly optimized distribution networks.",
+      image: "/digital_growth.png"
+    }
+  ];
+
   return (
     <div className="flex flex-col min-h-screen">
-      {/* SECTION 1: Premium Hero */}
-      <section className="relative h-screen min-h-[600px] flex items-center bg-navy overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="https://images.unsplash.com/photo-1586528116311-ad8ed7c50a40?q=80&w=2070&auto=format&fit=crop" 
-            alt="Global Logistics and Cargo" 
-            fill 
-            className="object-cover opacity-30"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/80 to-transparent"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-20">
-          <div className="max-w-3xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6 border border-orange/30">
-              Enterprise Logistics
-            </span>
-            <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white leading-tight mb-6">
-              Global Logistics Solutions Built For <span className="text-orange">Modern Supply Chains</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
-              Connecting businesses with reliable logistics coordination, freight solutions, supply chain support, and operational excellence across global markets.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/quote" className="bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-orange/30 hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                Get a Quote <ArrowRight size={18} />
-              </Link>
-              <Link href="/contact" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20 px-8 py-4 rounded-lg font-bold transition-all flex items-center justify-center">
-                Schedule Consultation
-              </Link>
-            </div>
+      {/* SECTION 1: Dynamic Hero Carousel */}
+      <section className="relative h-[85vh] min-h-[600px] flex items-center bg-navy overflow-hidden">
+        <div className="absolute inset-0 z-0" ref={emblaRef}>
+          <div className="flex h-full">
+            {slides.map((slide, index) => (
+              <div key={index} className="flex-[0_0_100%] min-w-0 relative h-full">
+                <Image 
+                  src={slide.image} 
+                  alt={slide.highlight} 
+                  fill 
+                  className="object-cover opacity-40"
+                  priority={index === 0}
+                  unoptimized
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/80 to-transparent"></div>
+                
+                {/* Slide Content */}
+                <div className="absolute inset-0 flex items-center">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full pt-20">
+                    <div className="max-w-3xl">
+                      <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6 border border-orange/30">
+                        Enterprise Logistics
+                      </span>
+                      <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-tight mb-6 transition-all">
+                        {slide.title} <span className="text-orange">{slide.highlight}</span>
+                      </h1>
+                      <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
+                        {slide.desc}
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <Link href="/quote" className="bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-orange/30 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                          Get a Quote <ArrowRight size={18} />
+                        </Link>
+                        <Link href="/contact" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20 px-8 py-4 rounded-lg font-bold transition-all flex items-center justify-center">
+                          Schedule Consultation
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
+        </div>
+
+        {/* Custom Carousel Controls */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          {slides.map((_, i) => (
+            <button 
+              key={i} 
+              onClick={() => emblaApi?.scrollTo(i)}
+              className="w-3 h-3 rounded-full bg-white/50 hover:bg-orange transition-colors"
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
         </div>
       </section>
 
@@ -199,21 +259,27 @@ export default function Home() {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-navy mb-12">Trusted By Enterprise Leaders</h2>
-          <div className="bg-navy rounded-2xl p-8 md:p-12 max-w-4xl mx-auto text-white shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 text-[150px] leading-none text-white/5 font-serif opacity-50">&quot;</div>
-            <div className="relative z-10">
-              <div className="flex justify-center text-orange mb-6">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <svg key={star} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="mx-1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                ))}
-              </div>
-              <p className="text-xl md:text-2xl font-medium leading-relaxed mb-8 text-gray-200">
-                "Best Internation Resources completely transformed our supply chain. Their coordination is flawless, and their team acts as a true extension of our own operations. We've seen a 30% reduction in transit delays since partnering with them."
-              </p>
-              <h4 className="font-heading font-bold text-lg">Director of Logistics</h4>
-              <p className="text-gray-400">Global Manufacturing Corp</p>
+          
+          {reviews.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {reviews.map((r: any) => (
+                <div key={r.id} className="bg-navy rounded-2xl p-8 text-white shadow-xl relative text-left">
+                  <div className="flex text-orange mb-4">
+                    {[...Array(r.rating || 5)].map((_, i) => (
+                      <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="mr-1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-200 mb-6 text-sm italic">"{r.content}"</p>
+                  <div>
+                    <h4 className="font-heading font-bold text-sm text-orange">{r.author}</h4>
+                    <p className="text-xs text-gray-400">{r.role}, {r.company}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+          ) : (
+            <p className="text-gray-500">No reviews available at the moment. Add some via the Admin Dashboard!</p>
+          )}
         </div>
       </section>
 

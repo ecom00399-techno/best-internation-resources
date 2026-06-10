@@ -75,6 +75,7 @@ export default function IndustriesPage() {
                     alt={industry.title} 
                     fill 
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-navy/40"></div>
                   <div className="absolute top-4 left-4 w-12 h-12 bg-orange text-white rounded-xl flex items-center justify-center shadow-lg">

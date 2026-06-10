@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import NextImage from "next/image";
 import { Menu, X, Phone } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -31,7 +32,14 @@ export default function Navbar() {
         <div className="flex justify-between h-20">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center gap-3">
-              <img src="/logo.jpg" alt="Best Internation Resources Logo" className="h-12 w-auto object-contain" />
+              <NextImage 
+                src="/logo.png" 
+                alt="Best Internation Resources Logo" 
+                width={200} 
+                height={60} 
+                className="h-12 w-auto object-contain"
+                priority
+              />
             </Link>
           </div>
           <div className="hidden lg:flex items-center space-x-1">

@@ -74,3 +74,26 @@ model ActivityLog {
 
   @@map("activity_logs")
 }
+
+model Review {
+  id        String   @id @default(uuid())
+  author    String
+  role      String
+  company   String
+  content   String
+  rating    Int      @default(5)
+  featured  Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("reviews")
+}
+
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("site_settings")
+}

@@ -6,17 +6,18 @@ import { Users, Package, Mail, LogOut, Search, Filter, Download } from "lucide-r
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("leads");
-  const [data, setData] = useState({ leads: [], quotes: [], contacts: [] });
+  const [data, setData] = useState<any>({ leads: [], quotes: [], contacts: [], reviews: [] });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
       try {
-        const [leadsRes, quotesRes, contactsRes] = await Promise.all([
+        const [leadsRes, quotesRes, contactsRes, reviewsRes] = await Promise.all([
           fetch("/api/leads"),
           fetch("/api/quotes"),
-          fetch("/api/contact")
+          fetch("/api/contact"),
+          fetch("/api/reviews")
         ]);
 
         if (leadsRes.status === 401) {
@@ -27,11 +28,13 @@ export default function AdminDashboard() {
         const leads = await leadsRes.json();
         const quotes = await quotesRes.json();
         const contacts = await contactsRes.json();
+        const reviews = await reviewsRes.json();
 
         setData({
           leads: leads.leads || [],
           quotes: quotes.quotes || [],
-          contacts: contacts.contacts || []
+          contacts: contacts.contacts || [],
+          reviews: reviews.reviews || []
         });
         setLoading(false);
       } catch (error) {
@@ -61,7 +64,7 @@ export default function AdminDashboard() {
 
       if (res.ok) {
         // Optimistic UI update
-        setData(prev => ({
+        setData((prev: any) => ({
           ...prev,
           [type]: prev[type as keyof typeof data].map((item: any) => 
             item.id === id ? { ...item, status: newStatus } : item
@@ -181,6 +184,80 @@ export default function AdminDashboard() {
     };
   };
 
+  const [newReview, setNewReview] = useState({ author: '', role: '', company: '', content: '' });
+
+  const handleAddReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReview)
+      });
+      if (res.ok) {
+        const added = await res.json();
+        setData((prev: any) => ({ ...prev, reviews: [added, ...prev.reviews] }));
+        setNewReview({ author: '', role: '', company: '', content: '' });
+      }
+    } catch (err) {}
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    try {
+      await fetch(`/api/reviews/${id}`, { method: "DELETE" });
+      setData((prev: any) => ({ ...prev, reviews: prev.reviews.filter((r: any) => r.id !== id) }));
+    } catch (err) {}
+  };
+
+  const renderCMS = () => (
+    <div className="p-6">
+      <h3 className="text-xl font-bold text-navy mb-6 border-b pb-2">Reviews CMS</h3>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Add Review Form */}
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+          <h4 className="font-bold text-navy mb-4">Add New Review</h4>
+          <form onSubmit={handleAddReview} className="space-y-4">
+            <input 
+              required type="text" placeholder="Author Name (e.g. John Doe)" 
+              className="w-full p-2 border rounded" value={newReview.author} onChange={e => setNewReview({...newReview, author: e.target.value})}
+            />
+            <input 
+              required type="text" placeholder="Role (e.g. Director of Logistics)" 
+              className="w-full p-2 border rounded" value={newReview.role} onChange={e => setNewReview({...newReview, role: e.target.value})}
+            />
+            <input 
+              required type="text" placeholder="Company (e.g. Global Manufacturing Corp)" 
+              className="w-full p-2 border rounded" value={newReview.company} onChange={e => setNewReview({...newReview, company: e.target.value})}
+            />
+            <textarea 
+              required placeholder="Review Content" rows={4}
+              className="w-full p-2 border rounded" value={newReview.content} onChange={e => setNewReview({...newReview, content: e.target.value})}
+            />
+            <button type="submit" className="w-full bg-orange text-white font-bold py-2 rounded hover:bg-orange-hover transition-colors">
+              Save Review
+            </button>
+          </form>
+        </div>
+
+        {/* Existing Reviews */}
+        <div>
+          <h4 className="font-bold text-navy mb-4">Manage Existing Reviews</h4>
+          <div className="space-y-4">
+            {data.reviews.map((r: any) => (
+              <div key={r.id} className="bg-white p-4 rounded border border-gray-200 shadow-sm relative">
+                <button onClick={() => handleDeleteReview(r.id)} className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm font-bold">Delete</button>
+                <p className="font-bold text-navy">{r.author} <span className="text-gray-500 text-sm font-normal">| {r.role}, {r.company}</span></p>
+                <p className="text-gray-600 mt-2 text-sm italic">"{r.content}"</p>
+              </div>
+            ))}
+            {data.reviews.length === 0 && <p className="text-gray-500 text-sm">No reviews added yet.</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const stats = getStats();
 
   return (
@@ -251,6 +328,12 @@ export default function AdminDashboard() {
               >
                 General Contact
               </button>
+              <button 
+                onClick={() => setActiveTab('reviews')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'reviews' ? 'bg-white text-navy shadow-sm' : 'text-gray-500 hover:text-navy'}`}
+              >
+                Content & Reviews CMS
+              </button>
             </div>
             
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -274,7 +357,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Table Data */}
-          {renderTable(activeTab)}
+          {activeTab === 'reviews' ? renderCMS() : renderTable(activeTab)}
         </div>
       </main>
     </div>

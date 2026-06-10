@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import NextImage from "next/image";
 import { usePathname } from "next/navigation";
 import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
 
@@ -18,7 +19,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-6 bg-white p-3 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-              <img src="/logo.jpg" alt="Best Internation Resources Logo" className="h-12 w-auto object-contain" />
+              <NextImage 
+                src="/logo.png" 
+                alt="Best Internation Resources Logo" 
+                width={200} 
+                height={60} 
+                className="h-12 w-auto object-contain"
+              />
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Your trusted partner for global logistics coordination and powerful digital marketing growth solutions since 2019.

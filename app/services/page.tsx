@@ -70,6 +70,7 @@ export default function ServicesPage() {
             alt="Services Background" 
             fill 
             className="object-cover"
+            unoptimized
           />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
@@ -93,6 +94,7 @@ export default function ServicesPage() {
                     alt={service.title} 
                     fill 
                     className="object-cover hover:scale-105 transition-transform duration-700"
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-navy/20"></div>
                   <div className="absolute bottom-6 left-6 w-16 h-16 bg-orange text-white rounded-xl flex items-center justify-center shadow-lg">
