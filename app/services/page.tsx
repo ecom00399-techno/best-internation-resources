@@ -10,7 +10,7 @@ const services = [
     overview: "End-to-end global freight forwarding via ocean, air, and ground networks.",
     benefits: ["Optimized routing for cost and speed", "Real-time shipment tracking", "Global carrier network access"],
     process: ["Route Analysis", "Carrier Selection", "Booking & Documentation", "Transit Monitoring"],
-    image: "https://images.unsplash.com/photo-1494412519320-aa3da3715a41?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/freight.png"
   },
   {
     id: "supply-chain",
@@ -19,7 +19,7 @@ const services = [
     overview: "Strategic optimization of your entire supply chain for maximum efficiency and resilience.",
     benefits: ["Reduced operational costs", "Improved inventory turnover", "Enhanced supply chain visibility"],
     process: ["Supply Chain Audit", "Strategy Development", "Technology Integration", "Continuous Optimization"],
-    image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?q=80&w=2065&auto=format&fit=crop"
+    image: "/images/supply-chain.png"
   },
   {
     id: "import-export",
@@ -28,7 +28,7 @@ const services = [
     overview: "Expert navigation of complex customs, tariffs, and international trade regulations.",
     benefits: ["Customs clearance acceleration", "Tariff classification accuracy", "Trade compliance assurance"],
     process: ["Documentation Review", "Customs Filing", "Duty & Tax Calculation", "Final Clearance"],
-    image: "https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/import-export.png"
   },
   {
     id: "warehousing",
@@ -37,7 +37,7 @@ const services = [
     overview: "Secure, strategically located warehousing facilities for your inventory.",
     benefits: ["Flexible storage capacity", "Advanced inventory management", "Cross-docking capabilities"],
     process: ["Receiving & Inspection", "Storage Allocation", "Pick & Pack", "Dispatch"],
-    image: "https://images.unsplash.com/photo-1553413077-190dd305871c?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/warehousing.png"
   },
   {
     id: "distribution",
@@ -46,7 +46,7 @@ const services = [
     overview: "Reliable last-mile delivery and distribution network management.",
     benefits: ["On-time delivery performance", "Route optimization", "Reverse logistics handling"],
     process: ["Order Processing", "Load Planning", "Dispatch & Routing", "Proof of Delivery"],
-    image: "https://images.unsplash.com/photo-1519003722824-194d4455a60c?q=80&w=2075&auto=format&fit=crop"
+    image: "/images/distribution.png"
   },
   {
     id: "consulting",
@@ -55,7 +55,7 @@ const services = [
     overview: "Expert advisory to restructure and improve your logistics operations.",
     benefits: ["Identify operational bottlenecks", "Cost reduction strategies", "Risk mitigation planning"],
     process: ["Discovery & Analysis", "Solution Design", "Implementation Planning", "Performance Review"],
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/consulting.png"
   }
 ];
 

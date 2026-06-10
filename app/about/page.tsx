@@ -9,7 +9,7 @@ export default function AboutPage() {
       <section className="bg-navy py-20 text-center px-4 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-30">
           <Image 
-            src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?q=80&w=2070&auto=format&fit=crop" 
+            src="/images/about.png" 
             alt="About Background" 
             fill 
             className="object-cover"
@@ -47,7 +47,7 @@ export default function AboutPage() {
             </div>
             <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image 
-                src="https://images.unsplash.com/photo-1586528116311-ad8ed7c50a40?q=80&w=2070&auto=format&fit=crop" 
+                src="/images/about.png" 
                 alt="Logistics Operations" 
                 fill 
                 className="object-cover"

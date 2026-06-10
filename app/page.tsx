@@ -64,7 +64,7 @@ export default function Home() {
                   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full pt-20">
                     <div className="max-w-3xl">
                       <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6 border border-orange/30">
-                        Enterprise Logistics
+                        Best Internation Resources
                       </span>
                       <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-tight mb-6 transition-all">
                         {slide.title} <span className="text-orange">{slide.highlight}</span>

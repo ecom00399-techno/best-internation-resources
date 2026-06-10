@@ -8,42 +8,42 @@ const industries = [
     title: "Manufacturing",
     icon: <Factory size={40} />,
     description: "End-to-end supply chain support for manufacturers, ensuring raw materials arrive just-in-time and finished goods reach global markets without delay.",
-    image: "https://images.unsplash.com/photo-1565439390234-fc560e94ab8e?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/manufacturing.png"
   },
   {
     id: "retail",
     title: "Retail",
     icon: <Store size={40} />,
     description: "Responsive logistics solutions for retail operations, managing seasonal volume spikes and ensuring shelf availability across national store networks.",
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/distribution.png"
   },
   {
     id: "distribution",
     title: "Distribution",
     icon: <Truck size={40} />,
     description: "Strategic partnerships with regional distributors to optimize middle-mile and last-mile delivery networks for maximum efficiency.",
-    image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?q=80&w=2074&auto=format&fit=crop"
+    image: "/images/freight.png"
   },
   {
     id: "warehousing",
     title: "Warehousing",
     icon: <Package size={40} />,
     description: "B2B support for high-volume warehousing operations requiring specialized freight handling and cross-docking capabilities.",
-    image: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?q=80&w=2072&auto=format&fit=crop"
+    image: "/images/warehousing.png"
   },
   {
     id: "import-export",
     title: "Import & Export",
     icon: <Anchor size={40} />,
     description: "Dedicated support for trading companies needing reliable ocean and air freight coordination across complex international borders.",
-    image: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/import-export.png"
   },
   {
     id: "ecommerce",
     title: "E-commerce",
     icon: <ShoppingCart size={40} />,
     description: "High-velocity fulfillment logistics designed for the demanding pace of modern e-commerce and direct-to-consumer operations.",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop"
+    image: "/images/ecommerce.png"
   }
 ];
 
