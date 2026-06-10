@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
 export default function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/dashboard")) return null;
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <footer className="bg-navy text-white pt-20 pb-8 relative overflow-hidden">

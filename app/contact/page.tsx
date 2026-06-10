@@ -203,18 +203,27 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map */}
-      <section className="h-[400px] w-full bg-gray-200">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1m3!1d2830.4077651049516!2d-106.95551978430752!3d44.79796037909873!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5335fabc2a66677f%3A0x8f7d9d06b728b763!2s30%20N%20Gould%20St%20Ste%20R%2C%20Sheridan%2C%20WY%2082801!5e0!3m2!1sen!2sus!4v1650000000000!5m2!1sen!2sus" 
-          width="100%" 
-          height="100%" 
-          style={{ border: 0 }} 
-          allowFullScreen 
-          loading="lazy" 
-          referrerPolicy="no-referrer-when-downgrade"
-          title="Office Location"
+      <section className="h-[380px] w-full bg-navy relative overflow-hidden">
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=-106.9630%2C44.7910%2C-106.9480%2C44.8050&layer=mapnik&marker=44.7980%2C-106.9555"
+          width="100%"
+          height="100%"
+          style={{ border: 0, filter: "grayscale(20%) contrast(1.1)" }}
+          loading="lazy"
+          title="Office Location - Sheridan, Wyoming"
         ></iframe>
+        <div className="absolute bottom-4 left-4 bg-navy/90 backdrop-blur text-white px-4 py-3 rounded-xl shadow-lg border border-white/10 text-sm">
+          <p className="font-bold text-orange">Best Internation Resources LLC</p>
+          <p className="text-gray-300">30 N Gould St Ste R, Sheridan, WY 82801</p>
+          <a
+            href="https://maps.google.com/?q=30+N+Gould+St+Ste+R+Sheridan+WY+82801"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-orange hover:text-orange/80 text-xs mt-1 inline-block"
+          >
+            Open in Google Maps →
+          </a>
+        </div>
       </section>
     </div>
   );

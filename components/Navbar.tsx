@@ -16,7 +16,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (pathname.startsWith("/dashboard")) return null;
+  if (pathname.startsWith("/admin")) return null;
 
   const links = [
     { name: "Home", path: "/" },
