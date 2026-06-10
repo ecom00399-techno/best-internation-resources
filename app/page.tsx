@@ -9,15 +9,75 @@ import { useCallback, useEffect, useState } from "react";
 
 export default function Home() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 6000, stopOnInteraction: false })]);
-  const [reviews, setReviews] = useState([]);
+
+  const DEFAULT_REVIEWS = [
+    {
+      id: "1",
+      author: "Loveleen Kaur",
+      role: "Supply Chain Director",
+      company: "Arora Exports Pvt. Ltd.",
+      content: "Best Internation Resources transformed how we handle cross-border shipments. Their team is incredibly responsive, and our transit times dropped by 30% within the first quarter. Highly recommend for any serious exporter.",
+      rating: 5
+    },
+    {
+      id: "2",
+      author: "Aman Sethi",
+      role: "Operations Manager",
+      company: "Sethi Global Trade LLC",
+      content: "We've worked with several freight brokers over the years, but BIR stands out for their transparency and professionalism. No hidden fees, real-time updates, and they handled our customs clearance without a single delay.",
+      rating: 5
+    },
+    {
+      id: "3",
+      author: "Visha Gupta",
+      role: "Procurement Head",
+      company: "Gupta Manufacturing Co.",
+      content: "Partnering with Best Internation Resources was one of the best decisions for our procurement team. They managed our raw material imports seamlessly, even during peak season. Truly a reliable logistics partner.",
+      rating: 5
+    },
+    {
+      id: "4",
+      author: "Michael T. Harrington",
+      role: "VP of Logistics",
+      company: "Harrington Distribution Inc.",
+      content: "Outstanding freight coordination from start to finish. BIR's network and industry knowledge helped us navigate a complex multi-leg shipment across three continents. Delivered on time, every time.",
+      rating: 5
+    },
+    {
+      id: "5",
+      author: "Sarah Al-Mansouri",
+      role: "Regional Trade Manager",
+      company: "Gulf Bridge Trading",
+      content: "The level of professionalism at Best Internation Resources is remarkable. From documentation to final delivery, every step was handled with precision. Our Middle East distribution has never been smoother.",
+      rating: 5
+    },
+    {
+      id: "6",
+      author: "Chen Wei",
+      role: "Founder & CEO",
+      company: "SinoLink Cargo Solutions",
+      content: "BIR helped us establish a reliable shipping lane between Asia and North America. Their local expertise combined with a global network made all the difference. We renewed our contract without hesitation.",
+      rating: 5
+    },
+    {
+      id: "7",
+      author: "Priya Nambiar",
+      role: "Logistics Coordinator",
+      company: "Nambiar Retail Group",
+      content: "What sets BIR apart is their personal touch. They treated our business like it was their own, proactively resolving issues before they became problems. Exceptional service and great value.",
+      rating: 5
+    }
+  ];
+
+  const [reviews, setReviews] = useState<any[]>(DEFAULT_REVIEWS);
 
   useEffect(() => {
     fetch("/api/reviews")
       .then(res => res.json())
       .then(data => {
-        if (data.reviews) setReviews(data.reviews);
+        if (data.reviews && data.reviews.length > 0) setReviews(data.reviews);
       })
-      .catch(err => console.error("Failed to load reviews:", err));
+      .catch(() => {}); // Keep default reviews on error
   }, []);
 
   const slides = [
@@ -255,32 +315,65 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SECTION 7: Testimonials */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-navy mb-12">Trusted By Enterprise Leaders</h2>
-          
-          {reviews.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {reviews.map((r: any) => (
-                <div key={r.id} className="bg-navy rounded-2xl p-8 text-white shadow-xl relative text-left">
-                  <div className="flex text-orange mb-4">
-                    {[...Array(r.rating || 5)].map((_, i) => (
-                      <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="mr-1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    ))}
+      {/* SECTION 7: Testimonials - Auto-Scrolling Marquee */}
+      <section className="py-24 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+          <span className="text-orange font-semibold text-sm uppercase tracking-widest">Client Testimonials</span>
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-navy mt-3">Trusted By Leaders Worldwide</h2>
+          <p className="text-gray-500 mt-3 max-w-xl mx-auto">Real feedback from businesses who rely on Best Internation Resources every day.</p>
+        </div>
+
+        {/* Marquee Container */}
+        <div className="relative w-full">
+          {/* Left fade */}
+          <div className="absolute left-0 top-0 h-full w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none"></div>
+          {/* Right fade */}
+          <div className="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none"></div>
+
+          <div
+            className="flex gap-6 w-max"
+            style={{
+              animation: "scrollReviews 40s linear infinite",
+            }}
+          >
+            {/* Double the reviews for seamless loop */}
+            {[...reviews, ...reviews].map((r: any, idx: number) => (
+              <div
+                key={idx}
+                className="bg-navy rounded-2xl p-7 text-white shadow-xl text-left flex-shrink-0 w-[340px] md:w-[380px] border border-white/5 hover:border-orange/30 transition-all"
+              >
+                {/* Stars */}
+                <div className="flex text-orange mb-4">
+                  {[...Array(r.rating || 5)].map((_, i) => (
+                    <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none" className="mr-0.5">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                  ))}
+                </div>
+                {/* Content */}
+                <p className="text-gray-200 mb-6 text-sm leading-relaxed italic">"{r.content}"</p>
+                {/* Author */}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-orange/20 flex items-center justify-center text-orange font-bold text-sm flex-shrink-0">
+                    {r.author?.charAt(0)}
                   </div>
-                  <p className="text-gray-200 mb-6 text-sm italic">"{r.content}"</p>
                   <div>
                     <h4 className="font-heading font-bold text-sm text-orange">{r.author}</h4>
                     <p className="text-xs text-gray-400">{r.role}, {r.company}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">No reviews available at the moment. Add some via the Admin Dashboard!</p>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
+
+        {/* CSS Animation */}
+        <style jsx>{`
+          @keyframes scrollReviews {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}</style>
       </section>
 
       {/* SECTION 8: Final CTA */}
