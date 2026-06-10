@@ -35,7 +35,7 @@ const industries = [
     id: "import-export",
     title: "Import & Export",
     icon: <Anchor size={40} />,
-    description: "Dedicated support for trading companies needing reliable ocean and air freight coordination across complex international borders.",
+    description: "Dedicated support for trading companies needing reliable ocean and air Freight Broker across complex international borders.",
     image: "/images/import-export.png"
   },
   {

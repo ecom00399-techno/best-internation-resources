@@ -29,7 +29,7 @@ export default function Home() {
     },
     {
       title: "End-to-End International",
-      highlight: "Freight Coordination",
+      highlight: "Freight Broker",
       desc: "Seamless ocean, air, and ground freight forwarding networks ensuring your cargo reaches its destination safely and on time.",
       image: "/hero_coordination.png"
     },
@@ -149,7 +149,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Service Cards */}
             {[
-              { title: "Freight Coordination", icon: <Globe size={32}/>, desc: "End-to-end global freight forwarding via ocean, air, and ground networks." },
+              { title: "Freight Broker", icon: <Globe size={32}/>, desc: "End-to-end global freight forwarding via ocean, air, and ground networks." },
               { title: "Supply Chain Management", icon: <TrendingUp size={32}/>, desc: "Strategic optimization of your entire supply chain for maximum efficiency." },
               { title: "Import & Export Support", icon: <Anchor size={32}/>, desc: "Navigating complex customs, tariffs, and international trade regulations." },
               { title: "Warehousing Solutions", icon: <Package size={32}/>, desc: "Secure, strategically located warehousing facilities for your inventory." },

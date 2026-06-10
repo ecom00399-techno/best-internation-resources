@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyAuth } from './lib/auth';
+import { jwtVerify } from 'jose';
+
+async function verifyToken(token: string) {
+  const secret = process.env.JWT_SECRET || "bir-fallback-secret-key-2024";
+  return await jwtVerify(token, new TextEncoder().encode(secret));
+}
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('admin_token')?.value;
@@ -14,7 +19,7 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      await verifyAuth(token);
+      await verifyToken(token);
       return NextResponse.next();
     } catch (error) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
@@ -23,10 +28,9 @@ export async function middleware(request: NextRequest) {
 
   if (isLoginPage && token) {
     try {
-      await verifyAuth(token);
+      await verifyToken(token);
       return NextResponse.redirect(new URL('/admin', request.url));
     } catch (error) {
-      // Token invalid, allow them to stay on login page
       return NextResponse.next();
     }
   }

@@ -14,7 +14,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Best Internation Resources LLC | Global Logistics Solutions",
-  description: "Enterprise-grade global logistics solutions. We connect businesses with reliable freight coordination, supply chain support, and warehousing across global markets.",
+  description: "Enterprise-grade global logistics solutions. We connect businesses with reliable Freight Broker, supply chain support, and warehousing across global markets.",
   keywords: "Logistics, Supply Chain, Freight Forwarding, Warehousing, Distribution, Import, Export",
 };
 

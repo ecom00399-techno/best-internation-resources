@@ -145,7 +145,7 @@ function QuoteForm() {
                 name="service" value={formData.service} onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-orange outline-none transition-all bg-white"
               >
-                <option value="freight">Freight Coordination</option>
+                <option value="freight">Freight Broker</option>
                 <option value="supply-chain">Supply Chain Management</option>
                 <option value="import-export">Import & Export Support</option>
                 <option value="warehousing">Warehousing Solutions</option>

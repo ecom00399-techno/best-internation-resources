@@ -5,7 +5,7 @@ import Image from "next/image";
 const services = [
   {
     id: "freight",
-    title: "Freight Coordination",
+    title: "Freight Broker",
     icon: <Globe size={40} />,
     overview: "End-to-end global freight forwarding via ocean, air, and ground networks.",
     benefits: ["Optimized routing for cost and speed", "Real-time shipment tracking", "Global carrier network access"],
