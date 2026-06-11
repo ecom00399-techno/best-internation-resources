@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("leads");
   const [data, setData] = useState<any>({ leads: [], quotes: [], contacts: [], reviews: [] });
   const [loading, setLoading] = useState(true);
+  const [dbError, setDbError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -20,15 +21,23 @@ export default function AdminDashboard() {
           fetch("/api/reviews")
         ]);
 
+        // Not authenticated - redirect to login
         if (leadsRes.status === 401) {
           router.push("/admin/login");
           return;
         }
 
-        const leads = await leadsRes.json();
-        const quotes = await quotesRes.json();
-        const contacts = await contactsRes.json();
-        const reviews = await reviewsRes.json();
+        // DB connection error - show error state instead of spinning
+        if (leadsRes.status === 500 || reviewsRes.status === 500) {
+          setDbError(true);
+          setLoading(false);
+          return;
+        }
+
+        const leads = await leadsRes.json().catch(() => ({ leads: [] }));
+        const quotes = await quotesRes.json().catch(() => ({ quotes: [] }));
+        const contacts = await contactsRes.json().catch(() => ({ contacts: [] }));
+        const reviews = await reviewsRes.json().catch(() => ({ reviews: [] }));
 
         setData({
           leads: leads.leads || [],
@@ -39,7 +48,8 @@ export default function AdminDashboard() {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching admin data:", error);
-        router.push("/admin/login");
+        setDbError(true);
+        setLoading(false);
       }
     };
 
@@ -260,8 +270,29 @@ export default function AdminDashboard() {
 
   const stats = getStats();
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-navy font-semibold">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* DB Error Banner */}
+      {dbError && (
+        <div className="bg-red-600 text-white text-sm px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="font-bold">⚠️ Database Connection Error:</span>
+            <span>Prisma cannot connect to Supabase. Set correct DATABASE_URL in Vercel Environment Variables and Redeploy.</span>
+          </div>
+          <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="underline text-xs whitespace-nowrap ml-4">Fix in Vercel →</a>
+        </div>
+      )}
       {/* Admin Header */}
       <header className="bg-navy text-white shadow-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

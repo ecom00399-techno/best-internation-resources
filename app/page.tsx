@@ -104,7 +104,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* SECTION 1: Dynamic Hero Carousel */}
-      <section className="relative h-[85vh] min-h-[600px] flex items-center bg-navy overflow-hidden">
+      <section className="relative h-screen min-h-[640px] max-h-[900px] flex items-center bg-navy overflow-hidden pt-20">
         <div className="absolute inset-0 z-0" ref={emblaRef}>
           <div className="flex h-full">
             {slides.map((slide, index) => (
@@ -113,30 +113,31 @@ export default function Home() {
                   src={slide.image} 
                   alt={slide.highlight} 
                   fill 
-                  className="object-cover opacity-40"
+                  className="object-cover opacity-35"
                   priority={index === 0}
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/80 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/85 to-navy/30"></div>
                 
                 {/* Slide Content */}
                 <div className="absolute inset-0 flex items-center">
-                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full pt-20">
-                    <div className="max-w-3xl">
-                      <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6 border border-orange/30">
+                  <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative w-full">
+                    <div className="max-w-2xl lg:max-w-3xl">
+                      <span className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-orange/20 text-orange font-semibold text-xs sm:text-sm tracking-wider uppercase mb-5 border border-orange/30">
+                        <span className="w-1.5 h-1.5 bg-orange rounded-full animate-pulse"></span>
                         Best Internation Resources
                       </span>
-                      <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-extrabold text-white leading-tight mb-6 transition-all">
-                        {slide.title} <span className="text-orange">{slide.highlight}</span>
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-extrabold text-white leading-[1.1] mb-5">
+                        {slide.title} <span className="text-orange block sm:inline">{slide.highlight}</span>
                       </h1>
-                      <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
+                      <p className="text-base sm:text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
                         {slide.desc}
                       </p>
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <Link href="/quote" className="bg-orange hover:bg-orange-hover text-white px-8 py-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-orange/30 hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <Link href="/quote" className="bg-orange hover:bg-orange-hover text-white px-7 py-3.5 sm:py-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-orange/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm sm:text-base">
                           Get a Quote <ArrowRight size={18} />
                         </Link>
-                        <Link href="/contact" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20 px-8 py-4 rounded-lg font-bold transition-all flex items-center justify-center">
+                        <Link href="/contact" className="bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20 px-7 py-3.5 sm:py-4 rounded-lg font-bold transition-all flex items-center justify-center text-sm sm:text-base">
                           Schedule Consultation
                         </Link>
                       </div>
@@ -148,13 +149,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Custom Carousel Controls */}
+        {/* Carousel Dots */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, i) => (
             <button 
               key={i} 
               onClick={() => emblaApi?.scrollTo(i)}
-              className="w-3 h-3 rounded-full bg-white/50 hover:bg-orange transition-colors"
+              className="w-2.5 h-2.5 rounded-full bg-white/40 hover:bg-orange transition-all hover:scale-110"
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
