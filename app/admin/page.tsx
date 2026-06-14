@@ -1,59 +1,66 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Package, Mail, LogOut, Search, Filter, Download } from "lucide-react";
+import { Users, Mail, Package, Download, Plus, Trash2, Star } from "lucide-react";
+
+type Lead = { id: string; name: string; email: string; phone?: string; company?: string; industry?: string; service?: string; status: string; createdAt: string };
+type Quote = { id: string; name: string; email: string; phone?: string; company?: string; industry?: string; service?: string; status: string; createdAt: string };
+type Contact = { id: string; name: string; email: string; phone?: string; message?: string; status: string; createdAt: string };
+type Review = { id: string; author: string; role?: string; company?: string; content: string; rating: number; createdAt: string };
 
 export default function AdminDashboard() {
   const router = useRouter();
+
+  // ✅ ALL hooks declared at the top — no conditional returns before these
   const [activeTab, setActiveTab] = useState("leads");
-  const [data, setData] = useState<any>({ leads: [], quotes: [], contacts: [], reviews: [] });
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [dbError, setDbError] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [newReview, setNewReview] = useState({ author: "", role: "", company: "", content: "", rating: 5 });
+  const [addingReview, setAddingReview] = useState(false);
 
   useEffect(() => {
-    const checkAuthAndFetch = async () => {
+    const fetchData = async () => {
       try {
-        const [leadsRes, quotesRes, contactsRes, reviewsRes] = await Promise.all([
+        const [lRes, qRes, cRes, rRes] = await Promise.all([
           fetch("/api/leads"),
           fetch("/api/quotes"),
           fetch("/api/contact"),
-          fetch("/api/reviews")
+          fetch("/api/reviews"),
         ]);
 
-        // Not authenticated - redirect to login
-        if (leadsRes.status === 401) {
+        if (lRes.status === 401) {
           router.push("/admin/login");
           return;
         }
 
-        // DB connection error - show error state instead of spinning
-        if (leadsRes.status === 500 || reviewsRes.status === 500) {
+        if (lRes.status === 500 || qRes.status === 500) {
           setDbError(true);
           setLoading(false);
           return;
         }
 
-        const leads = await leadsRes.json().catch(() => ({ leads: [] }));
-        const quotes = await quotesRes.json().catch(() => ({ quotes: [] }));
-        const contacts = await contactsRes.json().catch(() => ({ contacts: [] }));
-        const reviews = await reviewsRes.json().catch(() => ({ reviews: [] }));
+        const lData = await lRes.json().catch(() => ({}));
+        const qData = await qRes.json().catch(() => ({}));
+        const cData = await cRes.json().catch(() => ({}));
+        const rData = await rRes.json().catch(() => ({}));
 
-        setData({
-          leads: leads.leads || [],
-          quotes: quotes.quotes || [],
-          contacts: contacts.contacts || [],
-          reviews: reviews.reviews || []
-        });
+        setLeads(lData.leads || []);
+        setQuotes(qData.quotes || []);
+        setContacts(cData.contacts || []);
+        setReviews(rData.reviews || []);
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching admin data:", error);
+      } catch (err) {
+        console.error("Admin fetch error:", err);
         setDbError(true);
         setLoading(false);
       }
     };
-
-    checkAuthAndFetch();
+    fetchData();
   }, [router]);
 
   const handleLogout = async () => {
@@ -61,119 +68,148 @@ export default function AdminDashboard() {
     router.push("/admin/login");
   };
 
-  const updateStatus = async (type: string, id: string, newStatus: string) => {
+  const updateStatus = async (type: "leads" | "quotes" | "contacts", id: string, status: string) => {
+    const endpoints: Record<string, string> = {
+      leads: `/api/leads/${id}`,
+      quotes: `/api/quotes/${id}`,
+      contacts: `/api/contact/${id}`,
+    };
     try {
-      const endpoint = type === 'leads' ? `/api/leads/${id}` : 
-                       type === 'quotes' ? `/api/quotes/${id}` : `/api/contact/${id}`;
-      
-      const res = await fetch(endpoint, {
+      const res = await fetch(endpoints[type], {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status }),
       });
-
       if (res.ok) {
-        // Optimistic UI update
-        setData((prev: any) => ({
-          ...prev,
-          [type]: prev[type as keyof typeof data].map((item: any) => 
-            item.id === id ? { ...item, status: newStatus } : item
-          )
-        }));
+        const update = (prev: any[]) => prev.map((i) => (i.id === id ? { ...i, status } : i));
+        if (type === "leads") setLeads((p) => update(p));
+        if (type === "quotes") setQuotes((p) => update(p));
+        if (type === "contacts") setContacts((p) => update(p));
       }
-    } catch (error) {
-      console.error("Failed to update status");
-    }
+    } catch (e) {}
   };
 
-  const exportCSV = (type: string) => {
-    const dataset = data[type as keyof typeof data];
+  const handleAddReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddingReview(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReview),
+      });
+      if (res.ok) {
+        const added = await res.json();
+        setReviews((prev) => [added, ...prev]);
+        setNewReview({ author: "", role: "", company: "", content: "", rating: 5 });
+      }
+    } catch (e) {}
+    setAddingReview(false);
+  };
+
+  const handleDeleteReview = async (id: string) => {
+    try {
+      await fetch(`/api/reviews/${id}`, { method: "DELETE" });
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+    } catch (e) {}
+  };
+
+  const exportCSV = (dataset: any[], name: string) => {
     if (!dataset.length) return;
-
-    const headers = Object.keys(dataset[0]).filter(k => k !== 'id' && k !== 'updatedAt');
-    const csvContent = [
-      headers.join(","),
-      ...dataset.map((row: any) => headers.map(h => `"${row[h] || ''}"`).join(","))
-    ].join("\\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
+    const headers = Object.keys(dataset[0]).filter((k) => k !== "id");
+    const csv = [headers.join(","), ...dataset.map((r) => headers.map((h) => `"${r[h] || ""}"`).join(","))].join("\n");
     const a = document.createElement("a");
-    a.href = url;
-    a.download = `BIR_${type}_export_${new Date().toISOString().split('T')[0]}.csv`;
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = `BIR_${name}_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
   };
 
+  const filter = (arr: any[]) =>
+    arr.filter(
+      (i) =>
+        i.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        i.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        i.company?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+  const totalNew =
+    leads.filter((l) => l.status === "new").length +
+    quotes.filter((q) => q.status === "new").length +
+    contacts.filter((c) => c.status === "new").length;
+
+  // ✅ Conditional returns AFTER all hooks
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange border-t-transparent"></div>
+      <div className="flex-1 flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#FF6A00] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#0D1B2A] font-semibold">Loading Dashboard...</p>
+          <p className="text-gray-400 text-sm mt-1">Connecting to database</p>
+        </div>
       </div>
     );
   }
 
-  const renderTable = (type: string) => {
-    const dataset = data[type as keyof typeof data].filter((item: any) => 
-      (item.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-       item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       item.company?.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+  const StatusBadge = ({ status }: { status: string }) => (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide ${
+      status === "new" ? "bg-blue-100 text-blue-700" :
+      status === "contacted" ? "bg-orange-100 text-orange-700" :
+      "bg-green-100 text-green-700"
+    }`}>{status}</span>
+  );
 
-    if (dataset.length === 0) {
-      return <div className="p-8 text-center text-gray-500">No {type} found.</div>;
+  const renderTable = (arr: any[], type: "leads" | "quotes" | "contacts") => {
+    const filtered = filter(arr);
+    if (filtered.length === 0) {
+      return (
+        <div className="p-16 text-center">
+          <p className="text-gray-400 text-lg">No {type} found</p>
+          {dbError && <p className="text-red-500 text-sm mt-2">Database not connected — set DATABASE_URL in Vercel</p>}
+        </div>
+      );
     }
-
     return (
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+        <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200 text-sm text-gray-500 uppercase tracking-wider">
-              <th className="p-4 font-medium">Date</th>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Contact Info</th>
-              {type !== 'contacts' && <th className="p-4 font-medium">Industry / Service</th>}
-              <th className="p-4 font-medium">Status</th>
-              <th className="p-4 font-medium text-right">Actions</th>
+            <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase text-xs tracking-wider">
+              <th className="px-4 py-3 text-left font-medium">Date</th>
+              <th className="px-4 py-3 text-left font-medium">Name / Company</th>
+              <th className="px-4 py-3 text-left font-medium">Contact</th>
+              {type !== "contacts" && <th className="px-4 py-3 text-left font-medium">Industry</th>}
+              <th className="px-4 py-3 text-left font-medium">Status</th>
+              <th className="px-4 py-3 text-right font-medium">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {dataset.map((item: any) => (
-              <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
-                <td className="p-4 text-sm text-gray-500">
-                  {new Date(item.createdAt).toLocaleDateString()}
+            {filtered.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50/70 transition-colors">
+                <td className="px-4 py-3 text-gray-500 whitespace-nowrap">
+                  {new Date(item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                 </td>
-                <td className="p-4">
-                  <div className="font-medium text-navy">{item.name}</div>
-                  {item.company && <div className="text-xs text-gray-500 mt-1">{item.company}</div>}
+                <td className="px-4 py-3">
+                  <div className="font-semibold text-[#0D1B2A]">{item.name}</div>
+                  {item.company && <div className="text-gray-400 text-xs">{item.company}</div>}
                 </td>
-                <td className="p-4">
-                  <div className="text-sm text-gray-700">{item.email}</div>
-                  {item.phone && <div className="text-xs text-gray-500 mt-1">{item.phone}</div>}
+                <td className="px-4 py-3">
+                  <div className="text-gray-700">{item.email}</div>
+                  {item.phone && <div className="text-gray-400 text-xs">{item.phone}</div>}
                 </td>
-                {type !== 'contacts' && (
-                  <td className="p-4">
-                    <div className="text-sm capitalize">{item.industry || '-'}</div>
-                    <div className="text-xs text-gray-500 mt-1 capitalize">{item.service || '-'}</div>
-                  </td>
+                {type !== "contacts" && (
+                  <td className="px-4 py-3 text-gray-600 capitalize">{item.industry || "—"}</td>
                 )}
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium uppercase tracking-wider ${
-                    item.status === 'new' ? 'bg-blue-100 text-blue-700' :
-                    item.status === 'contacted' ? 'bg-orange/20 text-orange' :
-                    'bg-green-100 text-green-700'
-                  }`}>
-                    {item.status}
-                  </span>
+                <td className="px-4 py-3">
+                  <StatusBadge status={item.status || "new"} />
                 </td>
-                <td className="p-4 text-right">
-                  <select 
-                    value={item.status}
+                <td className="px-4 py-3 text-right">
+                  <select
+                    value={item.status || "new"}
                     onChange={(e) => updateStatus(type, item.id, e.target.value)}
-                    className="text-sm border border-gray-200 rounded px-2 py-1 outline-none focus:border-orange bg-white"
+                    className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:border-[#FF6A00] cursor-pointer"
                   >
-                    <option value="new">Mark New</option>
-                    <option value="contacted">Mark Contacted</option>
-                    <option value="closed">Mark Closed</option>
+                    <option value="new">New</option>
+                    <option value="contacted">Contacted</option>
+                    <option value="closed">Closed</option>
                   </select>
                 </td>
               </tr>
@@ -184,213 +220,157 @@ export default function AdminDashboard() {
     );
   };
 
-  const getStats = () => {
-    return {
-      totalLeads: data.leads.length,
-      totalQuotes: data.quotes.length,
-      newRequests: data.leads.filter((l: any) => l.status === 'new').length + 
-                   data.quotes.filter((q: any) => q.status === 'new').length +
-                   data.contacts.filter((c: any) => c.status === 'new').length
-    };
-  };
-
-  const [newReview, setNewReview] = useState({ author: '', role: '', company: '', content: '' });
-
-  const handleAddReview = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newReview)
-      });
-      if (res.ok) {
-        const added = await res.json();
-        setData((prev: any) => ({ ...prev, reviews: [added, ...prev.reviews] }));
-        setNewReview({ author: '', role: '', company: '', content: '' });
-      }
-    } catch (err) {}
-  };
-
-  const handleDeleteReview = async (id: string) => {
-    try {
-      await fetch(`/api/reviews/${id}`, { method: "DELETE" });
-      setData((prev: any) => ({ ...prev, reviews: prev.reviews.filter((r: any) => r.id !== id) }));
-    } catch (err) {}
-  };
-
-  const renderCMS = () => (
-    <div className="p-6">
-      <h3 className="text-xl font-bold text-navy mb-6 border-b pb-2">Reviews CMS</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Add Review Form */}
-        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-          <h4 className="font-bold text-navy mb-4">Add New Review</h4>
-          <form onSubmit={handleAddReview} className="space-y-4">
-            <input 
-              required type="text" placeholder="Author Name (e.g. John Doe)" 
-              className="w-full p-2 border rounded" value={newReview.author} onChange={e => setNewReview({...newReview, author: e.target.value})}
-            />
-            <input 
-              required type="text" placeholder="Role (e.g. Director of Logistics)" 
-              className="w-full p-2 border rounded" value={newReview.role} onChange={e => setNewReview({...newReview, role: e.target.value})}
-            />
-            <input 
-              required type="text" placeholder="Company (e.g. Global Manufacturing Corp)" 
-              className="w-full p-2 border rounded" value={newReview.company} onChange={e => setNewReview({...newReview, company: e.target.value})}
-            />
-            <textarea 
-              required placeholder="Review Content" rows={4}
-              className="w-full p-2 border rounded" value={newReview.content} onChange={e => setNewReview({...newReview, content: e.target.value})}
-            />
-            <button type="submit" className="w-full bg-orange text-white font-bold py-2 rounded hover:bg-orange-hover transition-colors">
-              Save Review
-            </button>
-          </form>
-        </div>
-
-        {/* Existing Reviews */}
-        <div>
-          <h4 className="font-bold text-navy mb-4">Manage Existing Reviews</h4>
-          <div className="space-y-4">
-            {data.reviews.map((r: any) => (
-              <div key={r.id} className="bg-white p-4 rounded border border-gray-200 shadow-sm relative">
-                <button onClick={() => handleDeleteReview(r.id)} className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm font-bold">Delete</button>
-                <p className="font-bold text-navy">{r.author} <span className="text-gray-500 text-sm font-normal">| {r.role}, {r.company}</span></p>
-                <p className="text-gray-600 mt-2 text-sm italic">"{r.content}"</p>
-              </div>
-            ))}
-            {data.reviews.length === 0 && <p className="text-gray-500 text-sm">No reviews added yet.</p>}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const stats = getStats();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-navy font-semibold">Loading Dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="flex-1 overflow-auto bg-gray-50 min-h-screen">
       {/* DB Error Banner */}
       {dbError && (
-        <div className="bg-red-600 text-white text-sm px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="font-bold">⚠️ Database Connection Error:</span>
-            <span>Prisma cannot connect to Supabase. Set correct DATABASE_URL in Vercel Environment Variables and Redeploy.</span>
-          </div>
-          <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="underline text-xs whitespace-nowrap ml-4">Fix in Vercel →</a>
+        <div className="bg-red-600 text-white text-sm px-6 py-3 flex flex-wrap items-center gap-2">
+          <span className="font-bold">⚠️ Database Not Connected.</span>
+          <span>Set the correct DATABASE_URL (pooler URL) in Vercel Environment Variables, then redeploy.</span>
+          <a href="https://vercel.com" target="_blank" rel="noreferrer" className="ml-auto underline whitespace-nowrap">Fix in Vercel →</a>
         </div>
       )}
-      {/* Admin Header */}
-      <header className="bg-navy text-white shadow-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-3">
-              <span className="font-heading font-bold text-xl tracking-wide">BIR <span className="text-orange">Admin</span></span>
-            </div>
-            <button 
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-lg"
-            >
-              <LogOut size={16} /> Logout
-            </button>
-          </div>
-        </div>
-      </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Total Leads</p>
-              <h3 className="text-3xl font-heading font-bold text-navy">{stats.totalLeads}</h3>
-            </div>
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center"><Users size={24} /></div>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Quote Requests</p>
-              <h3 className="text-3xl font-heading font-bold text-navy">{stats.totalQuotes}</h3>
-            </div>
-            <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center"><Package size={24} /></div>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">New Action Required</p>
-              <h3 className="text-3xl font-heading font-bold text-orange">{stats.newRequests}</h3>
-            </div>
-            <div className="w-12 h-12 bg-orange/10 text-orange rounded-lg flex items-center justify-center"><Mail size={24} /></div>
-          </div>
+      {/* Top Bar */}
+      <div className="bg-white border-b border-gray-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-[#0D1B2A]">Admin Dashboard</h1>
+          <p className="text-gray-500 text-sm">Best Internation Resources LLC</p>
         </div>
+        <div className="flex items-center gap-3 ml-auto">
+          <span className="text-sm text-gray-500">Support@bestinternationresources.com</span>
+          <button onClick={handleLogout} className="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors font-medium">
+            Logout
+          </button>
+        </div>
+      </div>
 
-        {/* Main Content Area */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          {/* Tabs & Controls */}
-          <div className="border-b border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-gray-50/50">
-            <div className="flex gap-2 bg-gray-200/50 p-1 rounded-lg">
-              <button 
-                onClick={() => setActiveTab('leads')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'leads' ? 'bg-white text-navy shadow-sm' : 'text-gray-500 hover:text-navy'}`}
-              >
-                Leads
-              </button>
-              <button 
-                onClick={() => setActiveTab('quotes')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'quotes' ? 'bg-white text-navy shadow-sm' : 'text-gray-500 hover:text-navy'}`}
-              >
-                Quotes
-              </button>
-              <button 
-                onClick={() => setActiveTab('contacts')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'contacts' ? 'bg-white text-navy shadow-sm' : 'text-gray-500 hover:text-navy'}`}
-              >
-                General Contact
-              </button>
-              <button 
-                onClick={() => setActiveTab('reviews')}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'reviews' ? 'bg-white text-navy shadow-sm' : 'text-gray-500 hover:text-navy'}`}
-              >
-                Content & Reviews CMS
-              </button>
-            </div>
-            
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <div className="relative w-full sm:w-64">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search name, email..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg outline-none focus:border-orange focus:ring-1 focus:ring-orange transition-all"
-                />
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: "Total Leads", value: leads.length, icon: Users, color: "text-blue-600 bg-blue-50" },
+            { label: "Quote Requests", value: quotes.length, icon: Package, color: "text-purple-600 bg-purple-50" },
+            { label: "Contact Messages", value: contacts.length, icon: Mail, color: "text-green-600 bg-green-50" },
+            { label: "New / Unread", value: totalNew, icon: Star, color: "text-orange-600 bg-orange-50" },
+          ].map((s) => (
+            <div key={s.label} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${s.color}`}>
+                <s.icon size={20} />
               </div>
-              <button 
-                onClick={() => exportCSV(activeTab)}
-                className="flex items-center gap-2 bg-navy hover:bg-navy-light text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              <div>
+                <p className="text-gray-500 text-xs font-medium">{s.label}</p>
+                <p className="text-2xl font-bold text-[#0D1B2A]">{s.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="border-b border-gray-100 flex overflow-x-auto">
+            {[
+              { key: "leads", label: `Leads (${leads.length})` },
+              { key: "quotes", label: `Quotes (${quotes.length})` },
+              { key: "contacts", label: `Messages (${contacts.length})` },
+              { key: "reviews", label: `Reviews (${reviews.length})` },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-5 py-4 text-sm font-semibold whitespace-nowrap transition-colors border-b-2 ${
+                  activeTab === tab.key
+                    ? "text-[#FF6A00] border-[#FF6A00]"
+                    : "text-gray-500 border-transparent hover:text-[#0D1B2A]"
+                }`}
               >
-                <Download size={16} /> <span className="hidden sm:inline">Export</span>
+                {tab.label}
+              </button>
+            ))}
+
+            <div className="flex items-center gap-2 ml-auto px-4">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 w-40 focus:outline-none focus:border-[#FF6A00]"
+              />
+              <button
+                onClick={() => {
+                  const map: Record<string, any[]> = { leads, quotes, contacts, reviews };
+                  exportCSV(map[activeTab] || [], activeTab);
+                }}
+                className="flex items-center gap-1 text-sm bg-[#0D1B2A] text-white px-3 py-1.5 rounded-lg hover:bg-[#1a2f45] transition-colors"
+              >
+                <Download size={14} /> Export
               </button>
             </div>
           </div>
 
-          {/* Table Data */}
-          {activeTab === 'reviews' ? renderCMS() : renderTable(activeTab)}
+          {/* Tab Content */}
+          {activeTab === "leads" && renderTable(leads, "leads")}
+          {activeTab === "quotes" && renderTable(quotes, "quotes")}
+          {activeTab === "contacts" && renderTable(contacts, "contacts")}
+
+          {activeTab === "reviews" && (
+            <div className="p-6 grid md:grid-cols-2 gap-6">
+              {/* Add Review Form */}
+              <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
+                <h3 className="font-bold text-[#0D1B2A] mb-4">Add New Review</h3>
+                <form onSubmit={handleAddReview} className="space-y-3">
+                  <input required type="text" placeholder="Author Name" value={newReview.author}
+                    onChange={(e) => setNewReview({ ...newReview, author: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FF6A00]" />
+                  <input type="text" placeholder="Role (e.g. Director of Logistics)" value={newReview.role}
+                    onChange={(e) => setNewReview({ ...newReview, role: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FF6A00]" />
+                  <input type="text" placeholder="Company Name" value={newReview.company}
+                    onChange={(e) => setNewReview({ ...newReview, company: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FF6A00]" />
+                  <textarea required placeholder="Review content..." value={newReview.content}
+                    onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FF6A00] resize-none" />
+                  <select value={newReview.rating} onChange={(e) => setNewReview({ ...newReview, rating: Number(e.target.value) })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#FF6A00]">
+                    <option value={5}>★★★★★ 5 Stars</option>
+                    <option value={4}>★★★★☆ 4 Stars</option>
+                    <option value={3}>★★★☆☆ 3 Stars</option>
+                  </select>
+                  <button type="submit" disabled={addingReview}
+                    className="w-full bg-[#FF6A00] text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+                    <Plus size={16} /> {addingReview ? "Adding..." : "Add Review"}
+                  </button>
+                </form>
+              </div>
+
+              {/* Reviews List */}
+              <div className="space-y-3 max-h-[500px] overflow-y-auto">
+                {reviews.length === 0 ? (
+                  <p className="text-gray-400 text-center py-8">No reviews yet. Add your first review.</p>
+                ) : reviews.map((r) => (
+                  <div key={r.id} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-[#0D1B2A] text-sm">{r.author}</p>
+                        <p className="text-gray-400 text-xs">{r.role} · {r.company}</p>
+                        <div className="flex mt-1">
+                          {[...Array(r.rating)].map((_, i) => <Star key={i} size={12} className="text-[#FF6A00] fill-[#FF6A00]" />)}
+                        </div>
+                      </div>
+                      <button onClick={() => handleDeleteReview(r.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                    <p className="text-gray-600 text-xs mt-2 leading-relaxed">{r.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
