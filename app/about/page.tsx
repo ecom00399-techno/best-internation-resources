@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { Target, Eye, Shield, Users, Zap, Globe, CheckCircle2 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "About Us | Best Internation Resources LLC",
+  description: "Learn about Best Internation Resources, a trusted global logistics provider since 2019. We specialize in supply chain management, freight brokerage, and cross-border distribution.",
+  keywords: "About Best Internation Resources, Logistics Company, Freight Broker, Global Supply Chain",
+};
+
 import Image from "next/image";
 import Link from "next/link";
 

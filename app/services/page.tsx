@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { Globe, TrendingUp, Anchor, Package, Truck, PackageSearch, ArrowRight, CheckCircle2 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Logistics Services | Best Internation Resources LLC",
+  description: "Comprehensive logistics services including Freight Brokerage, Supply Chain Management, Import/Export Support, Warehousing, and Distribution.",
+  keywords: "Freight Broker, Supply Chain Management, Import Export Support, Warehousing Solutions, Logistics Consulting",
+};
+
 import Link from "next/link";
 import Image from "next/image";
 

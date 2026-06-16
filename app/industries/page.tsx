@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { Factory, Store, Truck, Package, Anchor, ShoppingCart, ArrowRight } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Industries We Serve | Best Internation Resources LLC",
+  description: "Providing tailored logistics and supply chain solutions for Manufacturing, Retail, E-commerce, Importers, Exporters, and Distribution sectors.",
+  keywords: "Logistics for Manufacturing, Retail Supply Chain, E-commerce Logistics, Importers Exporters Services",
+};
+
 import Link from "next/link";
 import Image from "next/image";
 

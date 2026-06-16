@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, Settings, Users, Home, LayoutDashboard } from "lucide-react";
+import { LogOut, Settings, Users, Home, LayoutDashboard, FileText, PenTool } from "lucide-react";
 import NextImage from "next/image";
 
 export default function AdminLayout({
@@ -62,6 +62,30 @@ export default function AdminLayout({
             <span className="font-medium">Leads & Dashboard</span>
           </Link>
 
+          <Link
+            href="/admin/blog"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              pathname.startsWith("/admin/blog")
+                ? "bg-[#FF6A00] text-white shadow-lg shadow-orange-500/20"
+                : "text-gray-300 hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <FileText size={20} />
+            <span className="font-medium">Blog Manager</span>
+          </Link>
+
+          <Link
+            href="/admin/editor"
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+              pathname.startsWith("/admin/editor")
+                ? "bg-[#FF6A00] text-white shadow-lg shadow-orange-500/20"
+                : "text-gray-300 hover:bg-white/5 hover:text-white"
+            }`}
+          >
+            <PenTool size={20} />
+            <span className="font-medium">Website Editor</span>
+          </Link>
+
           <div className="my-4 h-px bg-white/10"></div>
           <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider px-4 mb-3">Quick Links</p>
 
@@ -92,7 +116,9 @@ export default function AdminLayout({
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <h1 className="text-lg font-bold text-[#0D1B2A]">
-              {pathname === "/admin" ? "Lead Management & Dashboard" : "Admin"}
+              {pathname === "/admin" && "Lead Management & Dashboard"}
+              {pathname.startsWith("/admin/blog") && "Blog Manager"}
+              {pathname.startsWith("/admin/editor") && "Website Editor"}
             </h1>
           </div>
           <div className="ml-auto flex items-center gap-4">

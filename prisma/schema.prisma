@@ -98,3 +98,20 @@ model SiteSetting {
 
   @@map("site_settings")
 }
+
+model Post {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   // Stores rich text or markdown
+  excerpt     String?
+  author      String   @default("Admin")
+  published   Boolean  @default(false)
+  seoTitle    String?  @map("seo_title")
+  seoDesc     String?  @map("seo_desc")
+  seoKeywords String?  @map("seo_keywords")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("posts")
+}
