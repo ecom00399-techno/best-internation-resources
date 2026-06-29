@@ -2,8 +2,71 @@ import Link from "next/link";
 import { ArrowRight, Globe, ShieldCheck, Clock, CheckCircle2, TrendingUp, Anchor, Truck, Package, PackageSearch, Users } from "lucide-react";
 import Image from "next/image";
 import ReviewsClient from "./ReviewsClient";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+const FAQ_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Best Internation Resources?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Best Internation Resources LLC is a US-based enterprise logistics company founded in 2019, headquartered in Sheridan, Wyoming. We specialize in freight brokerage, supply chain management, import/export coordination, and B2B logistics for manufacturers, distributors, and e-commerce enterprises globally."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What freight forwarding services does Best Internation Resources offer?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We offer full-service freight brokerage including ocean freight, air freight, intermodal ground transport, customs clearance, import/export documentation, warehousing, last-mile distribution, and ongoing supply chain consulting for B2B clients."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which industries does Best Internation Resources serve?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "We serve manufacturing, retail, e-commerce, pharmaceutical, automotive, electronics importers, and distribution companies. Our logistics solutions are tailored for mid-market to enterprise B2B operations with complex cross-border supply chains."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I get a freight quote from Best Internation Resources?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can request a free custom freight quote at bestinternationresources.com/quote. Simply provide your origin, destination, cargo details, and timeline, and our logistics team will respond within 24 hours."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Best Internation Resources a licensed freight broker?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Best Internation Resources LLC is a registered and licensed logistics provider operating in the United States. We are headquartered at 30 N Gould St Ste R, Sheridan, WY 82801."
+      }
+    }
+  ]
+};
+
+async function getSettings() {
+  try {
+    const settings = await prisma.siteSetting.findMany();
+    return settings.reduce((acc: Record<string, string>, s) => {
+      acc[s.key] = s.value;
+      return acc;
+    }, {});
+  } catch {
+    return {};
+  }
+}
+
+export default async function Home() {
+  const settings = await getSettings();
   return (
     <main className="flex flex-col min-h-screen">
       {/* SECTION 1: Static SEO-Optimized Hero Section */}
@@ -32,7 +95,7 @@ export default function Home() {
                 Enterprise Global Logistics Solutions For <span className="text-[#FF6A00] block sm:inline">B2B Supply Chains</span>
               </h1>
               <p className="text-base sm:text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
-                Connecting businesses with reliable logistics coordination, freight solutions, supply chain support, and operational excellence across global markets.
+                {settings.homeHeroSubtitle || "Connecting businesses with reliable logistics coordination, freight solutions, supply chain support, and operational excellence across global markets."}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link href="/quote" className="bg-[#FF6A00] hover:bg-orange-600 text-white px-7 py-3.5 sm:py-4 rounded-lg font-bold transition-all shadow-lg hover:shadow-[#FF6A00]/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm sm:text-base">
@@ -212,12 +275,46 @@ export default function Home() {
             <Link href="/quote" className="bg-white text-[#0D1B2A] hover:bg-gray-100 px-8 py-4 rounded-lg font-bold transition-all shadow-lg hover:-translate-y-0.5">
               Get a Quote
             </Link>
-            <a href="tel:+18285705669" className="border-2 border-white text-white hover:bg-white/10 px-8 py-4 rounded-lg font-bold transition-all">
+            <a href={`tel:${settings.companyPhone || '+18285705669'}`} className="border-2 border-white text-white hover:bg-white/10 px-8 py-4 rounded-lg font-bold transition-all">
               Call Now
             </a>
           </div>
         </div>
       </section>
+
+      {/* FAQ Section for AI SEO */}
+      <section className="py-20 bg-gray-50" id="faq">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="text-[#FF6A00] font-semibold text-sm uppercase tracking-widest">Quick Answers</span>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-[#0D1B2A] mt-3">Frequently Asked Questions</h2>
+            <p className="text-gray-500 mt-3 max-w-xl mx-auto">Everything you need to know about working with Best Internation Resources.</p>
+          </div>
+          <div className="space-y-4">
+            {[
+              { q: "What is Best Internation Resources?", a: "Best Internation Resources LLC is a US-based enterprise logistics company founded in 2019, headquartered in Sheridan, Wyoming. We specialize in freight brokerage, supply chain management, import/export coordination, and B2B logistics for manufacturers, distributors, and e-commerce enterprises globally." },
+              { q: "What freight services do you offer?", a: "We offer full-service freight brokerage including ocean freight, air freight, intermodal ground transport, customs clearance, import/export documentation, warehousing, last-mile distribution, and ongoing supply chain consulting for B2B clients." },
+              { q: "Which industries do you serve?", a: "We serve manufacturing, retail, e-commerce, pharmaceutical, automotive, electronics importers, and distribution companies. Our solutions are tailored for mid-market to enterprise B2B operations with complex cross-border supply chains." },
+              { q: "How do I get a freight quote?", a: "Request a free custom freight quote at our quote page. Simply provide your origin, destination, cargo details, and timeline — our logistics team will respond within 24 hours." },
+              { q: "Is Best Internation Resources a licensed freight broker?", a: "Yes. Best Internation Resources LLC is a registered and licensed logistics provider operating in the United States, headquartered at 30 N Gould St Ste R, Sheridan, WY 82801." }
+            ].map((item, i) => (
+              <details key={i} className="bg-white rounded-xl border border-gray-200 shadow-sm group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer font-heading font-bold text-[#0D1B2A] list-none">
+                  {item.q}
+                  <span className="text-[#FF6A00] text-2xl group-open:rotate-45 transition-transform duration-200 flex-shrink-0 ml-4">+</span>
+                </summary>
+                <div className="px-6 pb-6 text-gray-600 leading-relaxed">{item.a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ JSON-LD Schema for AI SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+      />
 
     </main>
   );
