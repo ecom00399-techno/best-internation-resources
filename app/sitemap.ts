@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://bestinternationresources.com'
 
-  return [
+  const baseUrls: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       lastModified: new Date(),
@@ -41,4 +41,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
   ]
+
+  const STATES = [
+    "alabama", "alaska", "arizona", "arkansas", "california", "colorado", "connecticut", 
+    "delaware", "florida", "georgia", "hawaii", "idaho", "illinois", "indiana", "iowa", 
+    "kansas", "kentucky", "louisiana", "maine", "maryland", "massachusetts", "michigan", 
+    "minnesota", "mississippi", "missouri", "montana", "nebraska", "nevada", "new-hampshire", 
+    "new-jersey", "new-mexico", "new-york", "north-carolina", "north-dakota", "ohio", 
+    "oklahoma", "oregon", "pennsylvania", "rhode-island", "south-carolina", "south-dakota", 
+    "tennessee", "texas", "utah", "vermont", "virginia", "washington", "west-virginia", 
+    "wisconsin", "wyoming"
+  ];
+
+  const locationUrls: MetadataRoute.Sitemap = STATES.map((state) => ({
+    url: `${baseUrl}/locations/${state}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }));
+
+  return [...baseUrls, ...locationUrls];
 }
