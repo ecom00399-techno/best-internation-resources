@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Target, Eye, Shield, Users, Zap, Globe, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About Us | Best Internation Resources LLC",
-  description: "Learn about Best Internation Resources, a trusted global logistics provider since 2019. We specialize in supply chain management, freight brokerage, and cross-border distribution.",
-  keywords: "About Best Internation Resources, Logistics Company, Freight Broker, Global Supply Chain",
+  title: "About Best Internation Resources | Enterprise Supply Chain Partner",
+  description: "Best Internation Resources is a top-tier global logistics provider. Learn how our strategic freight brokerage and supply chain management can scale your B2B operations.",
+  keywords: "About Best Internation Resources, Global Supply Chain Partner, Enterprise Freight Broker, Logistics Company, B2B Logistics",
 };
 
 import Image from "next/image";
@@ -28,7 +28,7 @@ export default function AboutPage() {
           <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6">
             Founded 2019
           </span>
-          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">Our <span className="text-orange">Story</span></h1>
+          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">About Best Internation Resources: <span className="text-orange">Global Logistics Experts</span></h1>
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
             Building the most reliable and transparent global logistics network for modern enterprise operations.
           </p>
@@ -40,7 +40,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-navy mb-6">Operational Excellence Since 2019</h2>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-navy mb-6">Strategic Supply Chain Partnerships Since 2019</h2>
               <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
                 <p>
                   Best Internation Resources LLC was founded on a simple premise: global supply chains were too fragmented, too opaque, and too slow to adapt to modern business needs.
@@ -121,7 +121,7 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="bg-gradient-to-br from-orange to-orange-hover py-20">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-heading font-bold text-white mb-6">Partner With A Leader</h2>
+          <h2 className="text-3xl font-heading font-bold text-white mb-6">Partner With Global Logistics Leaders</h2>
           <p className="text-white/90 text-lg mb-10">Experience logistics coordination that actually drives business growth.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/quote" className="bg-white text-navy hover:bg-gray-100 px-8 py-4 rounded-lg font-bold transition-all shadow-lg">

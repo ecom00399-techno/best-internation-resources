@@ -5,7 +5,7 @@ import ReviewsClient from "./ReviewsClient";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen">
       {/* SECTION 1: Static SEO-Optimized Hero Section */}
       <section className="relative h-screen min-h-[640px] max-h-[900px] flex items-center bg-[#0D1B2A] overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
@@ -29,7 +29,7 @@ export default function Home() {
                 Best Internation Resources
               </span>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-extrabold text-white leading-[1.1] mb-5">
-                Global Logistics Solutions Built For <span className="text-[#FF6A00] block sm:inline">Modern Supply Chains</span>
+                Enterprise Global Logistics Solutions For <span className="text-[#FF6A00] block sm:inline">B2B Supply Chains</span>
               </h1>
               <p className="text-base sm:text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
                 Connecting businesses with reliable logistics coordination, freight solutions, supply chain support, and operational excellence across global markets.
@@ -88,7 +88,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-[#FF6A00] font-semibold text-sm uppercase tracking-widest">Our Expertise</span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3 mb-4">Core Logistics Services</h2>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3 mb-4">Enterprise Freight & Logistics Services</h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-lg">Comprehensive supply chain solutions tailored for enterprise reliability and scale.</p>
           </div>
           
@@ -122,7 +122,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12">
             <div className="max-w-2xl">
               <span className="text-[#FF6A00] font-semibold text-sm uppercase tracking-widest">Sectors</span>
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3">Industries We Serve</h2>
+              <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3">Specialized B2B Industry Solutions</h2>
             </div>
             <Link href="/industries" className="hidden md:flex text-[#0D1B2A] font-semibold items-center hover:text-[#FF6A00] transition-colors">
               View All Industries <ArrowRight size={16} className="ml-2" />
@@ -145,7 +145,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <span className="text-[#FF6A00] font-semibold text-sm uppercase tracking-widest">Our Methodology</span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mt-3 mb-4">How We Operate</h2>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold mt-3 mb-4">Our Strategic Logistics Methodology</h2>
           </div>
           
           <div className="grid md:grid-cols-5 gap-8 relative">
@@ -174,7 +174,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-[#FF6A00] font-semibold text-sm uppercase tracking-widest">The Advantage</span>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3">Why Choose Best Internation</h2>
+            <h2 className="text-3xl md:text-5xl font-heading font-bold text-[#0D1B2A] mt-3">The Enterprise Logistics Advantage</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -206,7 +206,7 @@ export default function Home() {
       {/* SECTION 8: Final CTA */}
       <section className="bg-gradient-to-br from-[#FF6A00] to-orange-600 py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6">Ready To Optimize Your Logistics Operations?</h2>
+          <h2 className="text-3xl md:text-5xl font-heading font-bold text-white mb-6">Scale Your Supply Chain Operations Today</h2>
           <p className="text-white/90 text-lg mb-10">Partner with Best Internation Resources for seamless, reliable global trade.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/quote" className="bg-white text-[#0D1B2A] hover:bg-gray-100 px-8 py-4 rounded-lg font-bold transition-all shadow-lg hover:-translate-y-0.5">
@@ -219,6 +219,6 @@ export default function Home() {
         </div>
       </section>
 
-    </div>
+    </main>
   );
 }

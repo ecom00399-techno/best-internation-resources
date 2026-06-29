@@ -43,7 +43,7 @@ export default function ContactPage() {
     <div className="flex flex-col min-h-screen pt-20">
       {/* Header */}
       <section className="bg-navy py-16 text-center px-4">
-        <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">Contact Us</h1>
+        <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">Contact Our Global Logistics Experts</h1>
         <p className="text-gray-300 max-w-2xl mx-auto text-lg">
           Our global logistics experts are ready to assist you. Reach out today.
         </p>
@@ -57,7 +57,7 @@ export default function ContactPage() {
             {/* Contact Info */}
             <div className="lg:col-span-2 space-y-8">
               <div>
-                <h2 className="text-2xl font-heading font-bold text-navy mb-6">Get in Touch</h2>
+                <h2 className="text-2xl font-heading font-bold text-navy mb-6">Partner With Our Support Team</h2>
                 <p className="text-gray-600 mb-8 leading-relaxed">
                   Whether you have a question about our freight services or need immediate supply chain support, our team is here for you.
                 </p>

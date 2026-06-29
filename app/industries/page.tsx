@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Factory, Store, Truck, Package, Anchor, ShoppingCart, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Industries We Serve | Best Internation Resources LLC",
-  description: "Providing tailored logistics and supply chain solutions for Manufacturing, Retail, E-commerce, Importers, Exporters, and Distribution sectors.",
-  keywords: "Logistics for Manufacturing, Retail Supply Chain, E-commerce Logistics, Importers Exporters Services",
+  title: "Specialized Logistics Solutions by Industry | Best Internation Resources",
+  description: "B2B supply chain solutions tailored for Manufacturing, Retail, E-commerce, Importers, Exporters, and Distribution sectors. Scale your operations with us.",
+  keywords: "Logistics for Manufacturing, B2B Retail Supply Chain, Enterprise E-commerce Logistics, Importers Exporters Freight",
 };
 
 import Link from "next/link";
@@ -64,7 +64,7 @@ export default function IndustriesPage() {
           <span className="inline-block py-1 px-3 rounded-full bg-orange/20 text-orange font-semibold text-sm tracking-wider uppercase mb-6">
             Sectors We Serve
           </span>
-          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">Expertise Across <span className="text-orange">Industries</span></h1>
+          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">Specialized Logistics Solutions by <span className="text-orange">Industry</span></h1>
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
             Every industry has unique supply chain challenges. We provide specialized logistics strategies tailored to your specific market demands.
           </p>

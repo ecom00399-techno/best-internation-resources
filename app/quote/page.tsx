@@ -83,7 +83,7 @@ function QuoteForm() {
           <Package size={32} />
         </div>
         <div>
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-navy">Logistics Quote Request</h2>
+          <h2 className="text-2xl md:text-3xl font-heading font-bold text-navy">Custom Logistics Quote Request</h2>
           <p className="text-gray-500 mt-1">Fill out the details below for a customized proposal.</p>
         </div>
       </div>
@@ -217,7 +217,7 @@ export default function QuotePage() {
           <span className="inline-block py-1 px-3 rounded-full bg-navy/10 text-navy font-semibold text-sm tracking-wider uppercase mb-4">
             Partner With Us
           </span>
-          <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-navy mb-4">Request a Proposal</h1>
+          <h1 className="text-4xl md:text-5xl font-heading font-extrabold text-navy mb-4">Request a Global Supply Chain Proposal</h1>
           <p className="text-gray-600 text-lg">
             Let's discuss how Best Internation Resources can optimize your supply chain. Provide your details below for a comprehensive logistics quote.
           </p>

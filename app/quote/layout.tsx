@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Request a Quote | Best Internation Resources LLC",
-  description: "Request a free logistics quote from Best Internation Resources. Get pricing for freight brokerage, warehousing, distribution, and supply chain management.",
-  keywords: "Logistics Quote, Freight Pricing, Supply Chain Cost, Request Logistics Quote",
+  title: "Request a Custom Supply Chain Proposal | Best Internation Resources",
+  description: "Request a free, tailored enterprise logistics quote from Best Internation Resources. Competitive pricing for global freight brokerage and distribution.",
+  keywords: "Logistics Quote, B2B Freight Pricing, Enterprise Supply Chain Cost, Request Global Logistics Proposal",
 };
 
 export default function QuoteLayout({

@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Globe, TrendingUp, Anchor, Package, Truck, PackageSearch, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Logistics Services | Best Internation Resources LLC",
-  description: "Comprehensive logistics services including Freight Brokerage, Supply Chain Management, Import/Export Support, Warehousing, and Distribution.",
-  keywords: "Freight Broker, Supply Chain Management, Import Export Support, Warehousing Solutions, Logistics Consulting",
+  title: "Global Logistics & Freight Forwarding Services | Best Internation Resources",
+  description: "Explore our comprehensive B2B logistics services: Freight Brokerage, Supply Chain Consulting, Import/Export, Warehousing, and custom Distribution solutions.",
+  keywords: "Freight Forwarding Services, B2B Logistics Solutions, Supply Chain Consulting, Enterprise Warehousing, Global Freight Broker",
 };
 
 import Link from "next/link";
@@ -82,7 +82,7 @@ export default function ServicesPage() {
           />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">Our Enterprise <span className="text-orange">Services</span></h1>
+          <h1 className="text-4xl md:text-6xl font-heading font-extrabold text-white mb-6">Enterprise Global Logistics & <span className="text-orange">Freight Services</span></h1>
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
             From global freight forwarding to end-to-end supply chain management, we provide the infrastructure and expertise to scale your logistics operations.
           </p>
